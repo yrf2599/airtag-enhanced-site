@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AirTag定位器 - OpenStreetMap增强版</title>
+    <title>AirTag定位器 - 本地增强版</title>
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -36,29 +36,104 @@
             font-size: 14px;
         }
         
-        .container {
+        .nav-tabs {
             display: flex;
-            height: calc(100vh - 80px);
+            background: white;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .nav-tab:hover {
+            background: #e9ecef;
+        }
+        
+        .content {
+            height: calc(100vh - 140px);
+        }
+        
+        .tab-content {
+            display: none;
+            height: 100%;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .original-container {
+            height: 100%;
+            padding: 20px;
+            text-align: center;
+            background: white;
+        }
+        
+        .original-link {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .original-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .instructions {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: left;
+        }
+        
+        .instructions h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .map-container {
+            display: flex;
+            height: 100%;
             gap: 10px;
             padding: 10px;
         }
         
-        .original-site {
-            flex: 1;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            background: white;
-        }
-        
-        .original-site iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        
         .map-panel {
-            width: 400px;
+            flex: 1;
             background: white;
             border-radius: 8px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
@@ -74,7 +149,7 @@
             font-size: 16px;
         }
         
-        .map-container {
+        .map-content {
             flex: 1;
             position: relative;
         }
@@ -128,11 +203,6 @@
             box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
         }
         
-        .btn-small {
-            padding: 6px 10px;
-            font-size: 10px;
-        }
-        
         .status {
             padding: 10px;
             background: #e8f5e8;
@@ -167,64 +237,132 @@
             color: #666;
         }
         
-        @media (max-width: 1024px) {
-            .container {
-                flex-direction: column;
-                height: auto;
-            }
-            
-            .map-panel {
-                width: 100%;
-                height: 400px;
-            }
-            
-            .original-site {
-                height: 600px;
-            }
+        .info-panel {
+            width: 300px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .info-panel h4 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .info-panel ul {
+            padding-left: 20px;
+        }
+        
+        .info-panel li {
+            margin-bottom: 8px;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>🏷️ AirTag定位器 - OpenStreetMap增强版</h1>
+        <h1>🏷️ AirTag定位器 - 本地增强版</h1>
         <p>原网站 + OpenStreetMap地图集成</p>
     </div>
     
-    <div class="container">
-        <!-- 原网站嵌入 -->
-        <div class="original-site">
-            <iframe id="originalSite" 
-                    src="https://lovelyelfpop.atomgit.net/macless_haystack_pages/" 
-                    title="AirTag原始网站">
-            </iframe>
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="switchTab('original')">🌐 原网站访问</button>
+        <button class="nav-tab" onclick="switchTab('map')">🗺️ OpenStreetMap地图</button>
+    </div>
+    
+    <div class="content">
+        <!-- 原网站标签页 -->
+        <div id="original" class="tab-content active">
+            <div class="original-container">
+                <h2>🚀 访问原AirTag网站</h2>
+                
+                <a href="https://lovelyelfpop.atomgit.net/macless_haystack_pages/" 
+                   target="_blank" 
+                   class="original-link">
+                    🔗 打开原网站（新窗口）
+                </a>
+                
+                <div class="instructions">
+                    <h3>📝 使用说明：</h3>
+                    <ol>
+                        <li><strong>点击上方链接</strong>在新窗口打开原AirTag网站</li>
+                        <li><strong>添加设备</strong>：在原网站中添加您的AirTag设备</li>
+                        <li><strong>复制坐标</strong>：从原网站复制设备的坐标信息</li>
+                        <li><strong>切换到地图标签</strong>：点击上方"OpenStreetMap地图"标签</li>
+                        <li><strong>添加到地图</strong>：将复制的坐标粘贴到地图中</li>
+                        <li><strong>使用导航</strong>：点击地图标记的导航按钮</li>
+                    </ol>
+                    
+                    <h3>📝 更好的解决方案：</h3>
+                    <p>如果您想要更好的集成体验，建议：</p>
+                    <ol>
+                        <li>下载原网站文件到本地</li>
+                        <li>修改HTML文件，替换地图组件</li>
+                        <li>本地运行修改后的版本</li>
+                    </ol>
+                </div>
+            </div>
         </div>
         
-        <!-- OpenStreetMap面板 -->
-        <div class="map-panel">
-            <div class="map-header">
-                🗺️ OpenStreetMap 实时同步
-            </div>
-            
+        <!-- 地图标签页 -->
+        <div id="map" class="tab-content">
             <div class="map-container">
-                <div id="openstreetmap"></div>
-            </div>
-            
-            <div class="controls">
-                <div class="control-group">
-                    <label>手动添加坐标：</label>
-                    <input type="text" id="manualCoords" placeholder="纬度,经度 (例如: 39.9042,116.4074)">
+                <div class="map-panel">
+                    <div class="map-header">
+                        🗺️ OpenStreetMap 地图
+                    </div>
+                    
+                    <div class="map-content">
+                        <div id="openstreetmap"></div>
+                    </div>
+                    
+                    <div class="controls">
+                        <div class="control-group">
+                            <label>添加坐标：</label>
+                            <input type="text" id="manualCoords" placeholder="纬度,经度 (例: 39.9042,116.4074)">
+                        </div>
+                        <button class="btn" onclick="addManualCoordinate()">📍 添加到地图</button>
+                        <button class="btn" onclick="clearAllMarkers()">🗑️ 清空标记</button>
+                        <button class="btn" onclick="getCurrentLocation()">📱 当前位置</button>
+                    </div>
+                    
+                    <div class="status" id="status">
+                        🗺️ OpenStreetMap已加载，请手动添加坐标
+                    </div>
+                    
+                    <div class="detected-coords" id="detectedCoords">
+                        <div style="text-align: center; color: #999; font-size: 11px;">添加的坐标将显示在这里</div>
+                    </div>
                 </div>
-                <button class="btn btn-small" onclick="addManualCoordinate()">📍 添加到地图</button>
-                <button class="btn btn-small" onclick="clearAllMarkers()">🗑️ 清空标记</button>
-                <button class="btn btn-small" onclick="getCurrentLocation()">📱 当前位置</button>
-            </div>
-            
-            <div class="status" id="status">
-                ✅ 等待检测原网站中的坐标信息...
-            </div>
-            
-            <div class="detected-coords" id="detectedCoords">
-                <div style="text-align: center; color: #999; font-size: 11px;">检测到的坐标将显示在这里</div>
+                
+                <div class="info-panel">
+                    <h4>📝 使用指南</h4>
+                    <ul>
+                        <li>从原AirTag网站复制坐标</li>
+                        <li>粘贴坐标到上方输入框</li>
+                        <li>点击"添加到地图"按钮</li>
+                        <li>点击地图标记查看详情</li>
+                        <li>使用导航按钮跳转到Google Maps</li>
+                    </ul>
+                    
+                    <h4>🌐 地图操作</h4>
+                    <ul>
+                        <li>鼠标拖拽：移动地图</li>
+                        <li>滚轮：缩放地图</li>
+                        <li>点击标记：查看详情</li>
+                        <li>右键：菜单操作</li>
+                    </ul>
+                    
+                    <h4>✨ 功能特性</h4>
+                    <ul>
+                        <li>✅ 完全免费使用</li>
+                        <li>✅ 无需API密钥</li>
+                        <li>✅ 支持导航功能</li>
+                        <li>✅ 本地存储数据</li>
+                        <li>✅ 响应式设计</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -237,12 +375,38 @@
         let map;
         let markers = new Map();
         let detectedCoords = new Set();
+        let mapInitialized = false;
+        
+        // 切换标签
+        function switchTab(tabName) {
+            // 隐藏所有标签内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 移除所有标签的活跃状态
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 显示选中的标签内容
+            document.getElementById(tabName).classList.add('active');
+            
+            // 设置当前标签为活跃
+            event.target.classList.add('active');
+            
+            // 如果切换到地图标签且地图未初始化，则初始化地图
+            if (tabName === 'map' && !mapInitialized) {
+                setTimeout(initOpenStreetMap, 100);
+                mapInitialized = true;
+            }
+        }
         
         // 初始化OpenStreetMap
         function initOpenStreetMap() {
             console.log('🗺️ 初始化OpenStreetMap...');
             
-            // 创建地图实例（默认中心：北京天安门）
+            // 创建地图实例
             map = L.map('openstreetmap').setView([39.9042, 116.4074], 10);
             
             // 添加OpenStreetMap图层
@@ -252,20 +416,26 @@
             }).addTo(map);
             
             console.log('✅ OpenStreetMap初始化完成');
-            updateStatus('🗺️ OpenStreetMap已加载，等待坐标数据...');
+            updateStatus('🗺️ OpenStreetMap已加载，请手动添加坐标');
         }
         
-        // 更新状态信息
+        // 更新状态
         function updateStatus(message) {
             document.getElementById('status').innerHTML = message;
         }
         
         // 添加标记到地图
         function addMarkerToMap(lat, lng, title = '') {
+            if (!map) {
+                alert('请先切换到地图标签页');
+                return;
+            }
+            
             const markerId = `${lat}_${lng}`;
             
             // 避免重复添加
             if (markers.has(markerId)) {
+                updateStatus('⚠️ 该坐标已存在');
                 return;
             }
             
@@ -274,7 +444,7 @@
             // 创建弹窗内容
             const popupContent = `
                 <div style="min-width: 150px;">
-                    <h4 style="margin: 0 0 8px 0;">${title || '检测到的位置'}</h4>
+                    <h4 style="margin: 0 0 8px 0;">${title || '添加的位置'}</h4>
                     <p style="margin: 4px 0; font-family: monospace; font-size: 12px;">
                         <strong>坐标:</strong><br>
                         ${lat}, ${lng}
@@ -295,13 +465,18 @@
             marker.bindPopup(popupContent);
             markers.set(markerId, marker);
             
-            // 添加到检测列表
+            // 添加到列表
             addToDetectedList(lat, lng, title);
             
+            // 调整地图视野
+            map.setView([lat, lng], 15);
+            marker.openPopup();
+            
             console.log(`✅ 已添加标记: ${lat}, ${lng}`);
+            updateStatus(`✅ 已添加坐标: ${lat}, ${lng}`);
         }
         
-        // 添加到检测坐标列表
+        // 添加到检测列表
         function addToDetectedList(lat, lng, title = '') {
             const coordKey = `${lat},${lng}`;
             if (detectedCoords.has(coordKey)) {
@@ -309,10 +484,8 @@
             }
             
             detectedCoords.add(coordKey);
-            
             const container = document.getElementById('detectedCoords');
             
-            // 如果是第一个坐标，清空默认文本
             if (detectedCoords.size === 1) {
                 container.innerHTML = '';
             }
@@ -321,7 +494,7 @@
             coordItem.className = 'coord-item';
             coordItem.innerHTML = `
                 <span class="coord-text">${lat}, ${lng}</span>
-                <button class="btn btn-small" onclick="focusOnCoordinate(${lat}, ${lng})" title="定位到此坐标">
+                <button class="btn" onclick="focusOnCoordinate(${lat}, ${lng})" title="定位到此坐标">
                     🔍
                 </button>
             `;
@@ -331,6 +504,7 @@
         
         // 聚焦到指定坐标
         function focusOnCoordinate(lat, lng) {
+            if (!map) return;
             map.setView([lat, lng], 15);
             const markerId = `${lat}_${lng}`;
             const marker = markers.get(markerId);
@@ -352,6 +526,7 @@
                 map.removeLayer(marker);
                 markers.delete(markerId);
                 console.log(`🗑️ 已删除标记: ${markerId}`);
+                updateStatus(`🗑️ 已删除标记`);
             }
         }
         
@@ -365,7 +540,7 @@
                 detectedCoords.clear();
                 
                 document.getElementById('detectedCoords').innerHTML = 
-                    '<div style="text-align: center; color: #999; font-size: 11px;">检测到的坐标将显示在这里</div>';
+                    '<div style="text-align: center; color: #999; font-size: 11px;">添加的坐标将显示在这里</div>';
                 
                 console.log('🗑️ 已清空所有标记');
                 updateStatus('🗑️ 已清空所有标记');
@@ -403,9 +578,6 @@
             
             addMarkerToMap(lat, lng, '手动添加');
             input.value = '';
-            map.setView([lat, lng], 15);
-            
-            updateStatus(`📍 手动添加坐标: ${lat}, ${lng}`);
         }
         
         // 获取当前位置
@@ -423,13 +595,10 @@
                     const lng = position.coords.longitude;
                     
                     addMarkerToMap(lat, lng, '当前位置');
-                    map.setView([lat, lng], 15);
-                    
-                    updateStatus(`📱 已获取当前位置: ${lat.toFixed(6)}, ${lng.toFixed(6)}`);
                 },
                 function(error) {
                     console.error('获取位置失败:', error);
-                    updateStatus('❌ 无法获取当前位置，请检查权限设置');
+                    updateStatus('❌ 无法获取当前位置');
                 },
                 {
                     enableHighAccuracy: true,
@@ -439,52 +608,9 @@
             );
         }
         
-        // 监控iframe中的坐标（跨域限制，使用消息传递）
-        function monitorIframeCoordinates() {
-            const iframe = document.getElementById('originalSite');
-            
-            iframe.addEventListener('load', function() {
-                console.log('🔍 原网站已加载，开始监控坐标...');
-                updateStatus('🔍 正在监控原网站中的坐标信息...');
-                
-                // 由于跨域限制，我们无法直接访问iframe内容
-                // 这里模拟一些示例坐标（实际使用时需要其他方法）
-                setTimeout(() => {
-                    // 模拟检测到的坐标
-                    const sampleCoords = [
-                        {lat: 39.9042, lng: 116.4074, title: '天安门广场'},
-                        {lat: 40.7589, lng: -73.9851, title: '时代广场'},
-                        {lat: 51.5074, lng: -0.1278, title: '伦敦'},
-                    ];
-                    
-                    sampleCoords.forEach((coord, index) => {
-                        setTimeout(() => {
-                            addMarkerToMap(coord.lat, coord.lng, coord.title);
-                            updateStatus(`🎯 检测到第${index + 1}个坐标: ${coord.title}`);
-                        }, (index + 1) * 2000);
-                    });
-                    
-                    // 调整地图视野以显示所有标记
-                    setTimeout(() => {
-                        if (markers.size > 0) {
-                            const group = new L.featureGroup(Array.from(markers.values()));
-                            map.fitBounds(group.getBounds().pad(0.1));
-                            updateStatus(`✅ 已检测到 ${markers.size} 个坐标位置`);
-                        }
-                    }, 8000);
-                }, 3000);
-            });
-        }
-        
-        // 页面加载完成后初始化
+        // 页面加载完成
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 页面加载完成，初始化组件...');
-            
-            // 初始化地图
-            initOpenStreetMap();
-            
-            // 监控iframe坐标
-            monitorIframeCoordinates();
+            console.log('🚀 页面已加载');
             
             // 键盘快捷键
             document.addEventListener('keydown', function(e) {
@@ -494,7 +620,7 @@
             });
         });
         
-        console.log('✅ AirTag OpenStreetMap增强版已加载');
+        console.log('✅ AirTag 本地增强版已加载');
     </script>
 </body>
 </html>
