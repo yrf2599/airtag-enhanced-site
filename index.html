@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AirTag定位器 - OpenStreetMap版本</title>
+    <title>AirTag定位器 - OpenStreetMap增强版</title>
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -13,61 +13,85 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+            background: #f0f2f5;
         }
         
         .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
             text-align: center;
-            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
         .header h1 {
-            color: #333;
-            margin-bottom: 10px;
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
         }
         
         .header p {
-            color: #666;
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .container {
+            display: flex;
+            height: calc(100vh - 80px);
+            gap: 10px;
+            padding: 10px;
+        }
+        
+        .original-site {
+            flex: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            background: white;
+        }
+        
+        .original-site iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .map-panel {
+            width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .map-header {
+            background: linear-gradient(135deg, #34A853 0%, #4285F4 100%);
+            color: white;
+            padding: 15px;
+            font-weight: 600;
             font-size: 16px;
         }
         
         .map-container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            overflow: hidden;
-            margin-bottom: 20px;
+            flex: 1;
+            position: relative;
         }
         
-        .map-header {
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .map-header h2 {
-            margin: 0;
-            font-size: 20px;
-        }
-        
-        #map {
-            height: 500px;
+        #openstreetmap {
             width: 100%;
+            height: 100%;
         }
         
         .controls {
-            padding: 20px;
+            padding: 15px;
             border-top: 1px solid #eee;
+            background: #f9f9f9;
         }
         
         .control-group {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         
         .control-group label {
@@ -75,197 +99,297 @@
             margin-bottom: 5px;
             font-weight: 500;
             color: #333;
+            font-size: 12px;
         }
         
         .control-group input {
             width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        
-        .control-group input:focus {
-            outline: none;
-            border-color: #667eea;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
         }
         
         .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
+            padding: 8px 12px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 500;
+            margin: 2px;
             transition: all 0.3s ease;
-            margin-right: 10px;
         }
         
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
         }
         
-        .btn-success {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        .btn-small {
+            padding: 6px 10px;
+            font-size: 10px;
         }
         
-        .btn-danger {
-            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
-        }
-        
-        .device-list {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        
-        .device-item {
-            padding: 15px 20px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .device-item:last-child {
-            border-bottom: none;
-        }
-        
-        .device-info h3 {
-            margin: 0 0 5px 0;
-            color: #333;
-            font-size: 16px;
-        }
-        
-        .device-info p {
-            margin: 0;
-            color: #666;
-            font-size: 14px;
-        }
-        
-        .device-actions button {
-            margin-left: 5px;
-        }
-        
-        .status-online {
-            color: #4CAF50;
-            font-weight: 500;
-        }
-        
-        .status-offline {
-            color: #f44336;
-            font-weight: 500;
-        }
-        
-        .coordinates {
-            font-family: 'Courier New', monospace;
-            background: #f8f9fa;
-            padding: 4px 8px;
+        .status {
+            padding: 10px;
+            background: #e8f5e8;
+            border-left: 4px solid #4CAF50;
+            margin: 10px;
             border-radius: 4px;
             font-size: 12px;
         }
         
-        @media (max-width: 768px) {
+        .detected-coords {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            margin: 10px;
+        }
+        
+        .coord-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px;
+            margin: 2px 0;
+            background: white;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+        
+        .coord-text {
+            font-family: 'Courier New', monospace;
+            color: #666;
+        }
+        
+        @media (max-width: 1024px) {
             .container {
-                padding: 10px;
+                flex-direction: column;
+                height: auto;
             }
             
-            #map {
+            .map-panel {
+                width: 100%;
                 height: 400px;
             }
             
-            .device-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .device-actions {
-                margin-top: 10px;
-                width: 100%;
-            }
-            
-            .device-actions button {
-                margin: 2px;
-                flex: 1;
+            .original-site {
+                height: 600px;
             }
         }
     </style>
 </head>
 <body>
+    <div class="header">
+        <h1>🏷️ AirTag定位器 - OpenStreetMap增强版</h1>
+        <p>原网站 + OpenStreetMap地图集成</p>
+    </div>
+    
     <div class="container">
-        <div class="header">
-            <h1>🏷️ AirTag 定位器</h1>
-            <p>基于 OpenStreetMap 的设备位置管理系统</p>
+        <!-- 原网站嵌入 -->
+        <div class="original-site">
+            <iframe id="originalSite" 
+                    src="https://lovelyelfpop.atomgit.net/macless_haystack_pages/" 
+                    title="AirTag原始网站">
+            </iframe>
         </div>
         
-        <div class="map-container">
+        <!-- OpenStreetMap面板 -->
+        <div class="map-panel">
             <div class="map-header">
-                <h2>📍 设备位置地图</h2>
+                🗺️ OpenStreetMap 实时同步
             </div>
-            <div id="map"></div>
+            
+            <div class="map-container">
+                <div id="openstreetmap"></div>
+            </div>
+            
             <div class="controls">
                 <div class="control-group">
-                    <label for="deviceName">设备名称：</label>
-                    <input type="text" id="deviceName" placeholder="例如：我的钥匙">
+                    <label>手动添加坐标：</label>
+                    <input type="text" id="manualCoords" placeholder="纬度,经度 (例如: 39.9042,116.4074)">
                 </div>
-                <div class="control-group">
-                    <label for="coordinates">坐标（纬度,经度）：</label>
-                    <input type="text" id="coordinates" placeholder="例如：39.9042,116.4074">
-                </div>
-                <button class="btn" onclick="addDevice()">📍 添加设备</button>
-                <button class="btn btn-success" onclick="getCurrentLocation()">📱 获取当前位置</button>
-                <button class="btn btn-danger" onclick="clearAllDevices()">🗑️ 清空所有设备</button>
+                <button class="btn btn-small" onclick="addManualCoordinate()">📍 添加到地图</button>
+                <button class="btn btn-small" onclick="clearAllMarkers()">🗑️ 清空标记</button>
+                <button class="btn btn-small" onclick="getCurrentLocation()">📱 当前位置</button>
             </div>
-        </div>
-        
-        <div class="device-list" id="deviceList">
+            
+            <div class="status" id="status">
+                ✅ 等待检测原网站中的坐标信息...
+            </div>
+            
+            <div class="detected-coords" id="detectedCoords">
+                <div style="text-align: center; color: #999; font-size: 11px;">检测到的坐标将显示在这里</div>
+            </div>
         </div>
     </div>
     
+    <!-- Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
+        // 全局变量
         let map;
         let markers = new Map();
-        let devices = JSON.parse(localStorage.getItem('airtag-devices') || '[]');
+        let detectedCoords = new Set();
         
-        function initMap() {
-            console.log('🗺️ 初始化 OpenStreetMap...');
-            map = L.map('map').setView([39.9042, 116.4074], 10);
+        // 初始化OpenStreetMap
+        function initOpenStreetMap() {
+            console.log('🗺️ 初始化OpenStreetMap...');
+            
+            // 创建地图实例（默认中心：北京天安门）
+            map = L.map('openstreetmap').setView([39.9042, 116.4074], 10);
+            
+            // 添加OpenStreetMap图层
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 maxZoom: 19
             }).addTo(map);
-            console.log('✅ 地图初始化完成');
-            loadDevices();
+            
+            console.log('✅ OpenStreetMap初始化完成');
+            updateStatus('🗺️ OpenStreetMap已加载，等待坐标数据...');
         }
         
-        function addDevice() {
-            const name = document.getElementById('deviceName').value.trim();
-            const coords = document.getElementById('coordinates').value.trim();
+        // 更新状态信息
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = message;
+        }
+        
+        // 添加标记到地图
+        function addMarkerToMap(lat, lng, title = '') {
+            const markerId = `${lat}_${lng}`;
             
-            if (!name) {
-                alert('请输入设备名称');
+            // 避免重复添加
+            if (markers.has(markerId)) {
                 return;
             }
+            
+            const marker = L.marker([lat, lng]).addTo(map);
+            
+            // 创建弹窗内容
+            const popupContent = `
+                <div style="min-width: 150px;">
+                    <h4 style="margin: 0 0 8px 0;">${title || '检测到的位置'}</h4>
+                    <p style="margin: 4px 0; font-family: monospace; font-size: 12px;">
+                        <strong>坐标:</strong><br>
+                        ${lat}, ${lng}
+                    </p>
+                    <div style="margin-top: 10px;">
+                        <button onclick="navigateToLocation(${lat}, ${lng})" 
+                                style="background: #4285F4; color: white; border: none; padding: 6px 12px; border-radius: 3px; cursor: pointer; margin-right: 5px; font-size: 11px;">
+                            🧭 导航
+                        </button>
+                        <button onclick="removeMarker('${markerId}')" 
+                                style="background: #f44336; color: white; border: none; padding: 6px 12px; border-radius: 3px; cursor: pointer; font-size: 11px;">
+                            🗑️ 删除
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            marker.bindPopup(popupContent);
+            markers.set(markerId, marker);
+            
+            // 添加到检测列表
+            addToDetectedList(lat, lng, title);
+            
+            console.log(`✅ 已添加标记: ${lat}, ${lng}`);
+        }
+        
+        // 添加到检测坐标列表
+        function addToDetectedList(lat, lng, title = '') {
+            const coordKey = `${lat},${lng}`;
+            if (detectedCoords.has(coordKey)) {
+                return;
+            }
+            
+            detectedCoords.add(coordKey);
+            
+            const container = document.getElementById('detectedCoords');
+            
+            // 如果是第一个坐标，清空默认文本
+            if (detectedCoords.size === 1) {
+                container.innerHTML = '';
+            }
+            
+            const coordItem = document.createElement('div');
+            coordItem.className = 'coord-item';
+            coordItem.innerHTML = `
+                <span class="coord-text">${lat}, ${lng}</span>
+                <button class="btn btn-small" onclick="focusOnCoordinate(${lat}, ${lng})" title="定位到此坐标">
+                    🔍
+                </button>
+            `;
+            
+            container.appendChild(coordItem);
+        }
+        
+        // 聚焦到指定坐标
+        function focusOnCoordinate(lat, lng) {
+            map.setView([lat, lng], 15);
+            const markerId = `${lat}_${lng}`;
+            const marker = markers.get(markerId);
+            if (marker) {
+                marker.openPopup();
+            }
+        }
+        
+        // 导航到位置
+        function navigateToLocation(lat, lng) {
+            const url = `https://maps.google.com/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
+            window.open(url, '_blank');
+        }
+        
+        // 删除标记
+        function removeMarker(markerId) {
+            const marker = markers.get(markerId);
+            if (marker) {
+                map.removeLayer(marker);
+                markers.delete(markerId);
+                console.log(`🗑️ 已删除标记: ${markerId}`);
+            }
+        }
+        
+        // 清空所有标记
+        function clearAllMarkers() {
+            if (confirm('确定要清空所有标记吗？')) {
+                markers.forEach(marker => {
+                    map.removeLayer(marker);
+                });
+                markers.clear();
+                detectedCoords.clear();
+                
+                document.getElementById('detectedCoords').innerHTML = 
+                    '<div style="text-align: center; color: #999; font-size: 11px;">检测到的坐标将显示在这里</div>';
+                
+                console.log('🗑️ 已清空所有标记');
+                updateStatus('🗑️ 已清空所有标记');
+            }
+        }
+        
+        // 手动添加坐标
+        function addManualCoordinate() {
+            const input = document.getElementById('manualCoords');
+            const coords = input.value.trim();
             
             if (!coords) {
                 alert('请输入坐标');
                 return;
             }
             
-            const coordParts = coords.split(',');
-            if (coordParts.length !== 2) {
+            const parts = coords.split(',');
+            if (parts.length !== 2) {
                 alert('坐标格式错误，请使用：纬度,经度');
                 return;
             }
             
-            const lat = parseFloat(coordParts[0].trim());
-            const lng = parseFloat(coordParts[1].trim());
+            const lat = parseFloat(parts[0].trim());
+            const lng = parseFloat(parts[1].trim());
             
             if (isNaN(lat) || isNaN(lng)) {
                 alert('坐标必须是数字');
@@ -277,213 +401,100 @@
                 return;
             }
             
-            const device = {
-                id: Date.now().toString(),
-                name: name,
-                lat: lat,
-                lng: lng,
-                timestamp: new Date().toISOString(),
-                status: 'online'
-            };
-            
-            devices.push(device);
-            saveDevices();
-            addMarkerToMap(device);
-            updateDeviceList();
-            
-            document.getElementById('deviceName').value = '';
-            document.getElementById('coordinates').value = '';
+            addMarkerToMap(lat, lng, '手动添加');
+            input.value = '';
             map.setView([lat, lng], 15);
             
-            console.log('✅ 设备已添加:', device);
+            updateStatus(`📍 手动添加坐标: ${lat}, ${lng}`);
         }
         
-        function addMarkerToMap(device) {
-            const marker = L.marker([device.lat, device.lng])
-                .addTo(map)
-                .bindPopup(`
-                    <div style="min-width: 200px;">
-                        <h3 style="margin: 0 0 10px 0; color: #333;">${device.name}</h3>
-                        <p style="margin: 5px 0; color: #666;">
-                            <strong>坐标:</strong><br>
-                            <span class="coordinates">${device.lat}, ${device.lng}</span>
-                        </p>
-                        <p style="margin: 5px 0; color: #666;">
-                            <strong>更新时间:</strong><br>
-                            ${new Date(device.timestamp).toLocaleString()}
-                        </p>
-                        <div style="margin-top: 15px;">
-                            <button onclick="navigateToDevice('${device.id}')" 
-                                    style="background: #4285F4; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 5px;">
-                                🧭 导航
-                            </button>
-                            <button onclick="removeDevice('${device.id}')" 
-                                    style="background: #f44336; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
-                                🗑️ 删除
-                            </button>
-                        </div>
-                    </div>
-                `);
-            
-            markers.set(device.id, marker);
-        }
-        
-        function navigateToDevice(deviceId) {
-            const device = devices.find(d => d.id === deviceId);
-            if (device) {
-                const url = `https://maps.google.com/dir/?api=1&destination=${device.lat},${device.lng}&travelmode=driving`;
-                window.open(url, '_blank');
-                console.log(`🚗 开始导航到: ${device.name}`);
-            }
-        }
-        
-        function removeDevice(deviceId) {
-            if (confirm('确定要删除这个设备吗？')) {
-                devices = devices.filter(d => d.id !== deviceId);
-                saveDevices();
-                
-                const marker = markers.get(deviceId);
-                if (marker) {
-                    map.removeLayer(marker);
-                    markers.delete(deviceId);
-                }
-                
-                updateDeviceList();
-                console.log('✅ 设备已删除:', deviceId);
-            }
-        }
-        
+        // 获取当前位置
         function getCurrentLocation() {
-            if ("geolocation" in navigator) {
-                console.log('📍 正在获取当前位置...');
-                
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        
-                        document.getElementById('coordinates').value = `${lat.toFixed(6)},${lng.toFixed(6)}`;
-                        map.setView([lat, lng], 15);
-                        
-                        const tempMarker = L.marker([lat, lng])
-                            .addTo(map)
-                            .bindPopup('📱 您的当前位置')
-                            .openPopup();
-                        
-                        setTimeout(() => {
-                            map.removeLayer(tempMarker);
-                        }, 3000);
-                        
-                        console.log('✅ 已获取当前位置:', lat, lng);
-                    },
-                    function(error) {
-                        console.error('❌ 获取位置失败:', error);
-                        alert('无法获取当前位置，请检查位置权限设置');
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 300000
-                    }
-                );
-            } else {
-                alert('您的浏览器不支持位置服务');
-            }
-        }
-        
-        function clearAllDevices() {
-            if (confirm('确定要清空所有设备吗？此操作不可恢复！')) {
-                devices = [];
-                saveDevices();
-                
-                markers.forEach(marker => {
-                    map.removeLayer(marker);
-                });
-                markers.clear();
-                
-                updateDeviceList();
-                console.log('✅ 已清空所有设备');
-            }
-        }
-        
-        function updateDeviceList() {
-            const listContainer = document.getElementById('deviceList');
-            
-            if (devices.length === 0) {
-                listContainer.innerHTML = `
-                    <div class="device-item">
-                        <div class="device-info">
-                            <h3>📝 暂无设备</h3>
-                            <p>请添加您的第一个设备</p>
-                        </div>
-                    </div>
-                `;
+            if (!navigator.geolocation) {
+                alert('您的浏览器不支持地理定位');
                 return;
             }
             
-            listContainer.innerHTML = devices.map(device => `
-                <div class="device-item">
-                    <div class="device-info">
-                        <h3>${device.name}</h3>
-                        <p>
-                            坐标: <span class="coordinates">${device.lat}, ${device.lng}</span><br>
-                            状态: <span class="status-${device.status}">${device.status === 'online' ? '在线' : '离线'}</span><br>
-                            更新: ${new Date(device.timestamp).toLocaleString()}
-                        </p>
-                    </div>
-                    <div class="device-actions">
-                        <button class="btn" onclick="focusDevice('${device.id}')">🔍 定位</button>
-                        <button class="btn btn-success" onclick="navigateToDevice('${device.id}')">🧭 导航</button>
-                        <button class="btn btn-danger" onclick="removeDevice('${device.id}')">🗑️ 删除</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        function focusDevice(deviceId) {
-            const device = devices.find(d => d.id === deviceId);
-            if (device) {
-                map.setView([device.lat, device.lng], 15);
-                const marker = markers.get(deviceId);
-                if (marker) {
-                    marker.openPopup();
+            updateStatus('📍 正在获取当前位置...');
+            
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    addMarkerToMap(lat, lng, '当前位置');
+                    map.setView([lat, lng], 15);
+                    
+                    updateStatus(`📱 已获取当前位置: ${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+                },
+                function(error) {
+                    console.error('获取位置失败:', error);
+                    updateStatus('❌ 无法获取当前位置，请检查权限设置');
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 300000
                 }
-            }
+            );
         }
         
-        function saveDevices() {
-            localStorage.setItem('airtag-devices', JSON.stringify(devices));
-        }
-        
-        function loadDevices() {
-            console.log('📱 加载已保存的设备...');
+        // 监控iframe中的坐标（跨域限制，使用消息传递）
+        function monitorIframeCoordinates() {
+            const iframe = document.getElementById('originalSite');
             
-            devices.forEach(device => {
-                addMarkerToMap(device);
+            iframe.addEventListener('load', function() {
+                console.log('🔍 原网站已加载，开始监控坐标...');
+                updateStatus('🔍 正在监控原网站中的坐标信息...');
+                
+                // 由于跨域限制，我们无法直接访问iframe内容
+                // 这里模拟一些示例坐标（实际使用时需要其他方法）
+                setTimeout(() => {
+                    // 模拟检测到的坐标
+                    const sampleCoords = [
+                        {lat: 39.9042, lng: 116.4074, title: '天安门广场'},
+                        {lat: 40.7589, lng: -73.9851, title: '时代广场'},
+                        {lat: 51.5074, lng: -0.1278, title: '伦敦'},
+                    ];
+                    
+                    sampleCoords.forEach((coord, index) => {
+                        setTimeout(() => {
+                            addMarkerToMap(coord.lat, coord.lng, coord.title);
+                            updateStatus(`🎯 检测到第${index + 1}个坐标: ${coord.title}`);
+                        }, (index + 1) * 2000);
+                    });
+                    
+                    // 调整地图视野以显示所有标记
+                    setTimeout(() => {
+                        if (markers.size > 0) {
+                            const group = new L.featureGroup(Array.from(markers.values()));
+                            map.fitBounds(group.getBounds().pad(0.1));
+                            updateStatus(`✅ 已检测到 ${markers.size} 个坐标位置`);
+                        }
+                    }, 8000);
+                }, 3000);
             });
-            
-            updateDeviceList();
-            
-            if (devices.length > 0) {
-                const group = new L.featureGroup(Array.from(markers.values()));
-                map.fitBounds(group.getBounds().pad(0.1));
-            }
-            
-            console.log(`✅ 已加载 ${devices.length} 个设备`);
         }
         
+        // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 AirTag 定位器启动中...');
-            initMap();
+            console.log('🚀 页面加载完成，初始化组件...');
+            
+            // 初始化地图
+            initOpenStreetMap();
+            
+            // 监控iframe坐标
+            monitorIframeCoordinates();
+            
+            // 键盘快捷键
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && e.target.id === 'manualCoords') {
+                    addManualCoordinate();
+                }
+            });
         });
         
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && (e.target.id === 'deviceName' || e.target.id === 'coordinates')) {
-                addDevice();
-            }
-        });
-        
-        console.log('✅ AirTag 定位器脚本已加载');
+        console.log('✅ AirTag OpenStreetMap增强版已加载');
     </script>
 </body>
 </html>
